@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+}
+
+wrapper {
+    gradleVersion = '5.5'
+}
+
+group 'net.legenda'
+version '1.0'
+
+sourceCompatibility = 1.15
+
+repositories {
+    mavenCentral()
+}
+project.ext.lwjglVersion = "3.2.3"
+project.ext.lwjglNatives = "natives-windows"
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+
+dependencies {
+    implementation "org.lwjgl:lwjgl-bom:$lwjglVersion"
+    implementation "org.lwjgl:lwjgl:$lwjglVersion"
+    implementation "org.lwjgl:lwjgl-glfw:$lwjglVersion"
+    implementation "org.lwjgl:lwjgl-opengl:$lwjglVersion"
+    runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+}
