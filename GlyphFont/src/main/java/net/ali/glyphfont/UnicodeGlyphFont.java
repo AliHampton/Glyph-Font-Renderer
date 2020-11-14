@@ -20,13 +20,35 @@ public class UnicodeGlyphFont {
      * Construct a glyph font with specified font and anti-aliasing
      *
      * @param font the font to use
+     */
+    public UnicodeGlyphFont(Font font) {
+        this(font, true);
+    }
+
+    /**
+     * Construct a glyph font with specified font and specified anti-aliasing preferences
+     *
+     * @param font the font to use
      * @param antiAlias the anti-aliasing preference
      */
     public UnicodeGlyphFont(Font font, boolean antiAlias) {
+        this(font, antiAlias, 0);
+    }
+
+    /**
+     * Construct a glyph font with specified font, specified anti-aliasing preferences and specified
+     * initial glyph page to cache.
+     *
+     * @param font the font to use
+     * @param antiAlias the anti-aliasing preference
+     * @param initialCache the initial glyph page to cache. If {@code < 0} then no cache will be initialised
+     */
+    public UnicodeGlyphFont(Font font, boolean antiAlias, int initialCache) {
         this.font = font;
         this.antiAlias = antiAlias;
         this.MARGIN = (float) Math.floor(font.getSize() / 5f);
-        setupGlyph(0);
+        if (initialCache >= 0)
+            setupGlyph(initialCache);
     }
 
     /**

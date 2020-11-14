@@ -25,10 +25,10 @@ public class FontTest {
     }
 
     private void initFonts() {
-        timesNewRoman = new UnicodeGlyphFont(new Font("Times New Roman", Font.PLAIN, 30), true);
-        segoe = new UnicodeGlyphFont(new Font("Segoe UI", Font.PLAIN, 25), true);
-        calibri = new UnicodeGlyphFont(new Font("Calibri", Font.ITALIC, 25), true);
-        arial = new UnicodeGlyphFont(new Font("Arial", Font.BOLD, 25), true);
+        timesNewRoman = new UnicodeGlyphFont(new Font("Times New Roman", Font.PLAIN, 30));
+        segoe = new UnicodeGlyphFont(new Font("Segoe UI", Font.PLAIN, 25));
+        calibri = new UnicodeGlyphFont(new Font("Calibri", Font.ITALIC, 25));
+        arial = new UnicodeGlyphFont(new Font("Arial", Font.BOLD, 25));
     }
 
     private void drawText() {
