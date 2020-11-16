@@ -6,7 +6,7 @@ wrapper {
     gradleVersion = '5.5'
 }
 
-group 'net.legenda'
+group 'net.ali'
 version '1.0'
 
 sourceCompatibility = 1.15
