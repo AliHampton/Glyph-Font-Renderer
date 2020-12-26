@@ -17,7 +17,8 @@ public class UnicodeGlyphFont {
     private final float MARGIN;
 
     /**
-     * Construct a glyph font with specified font and anti-aliasing
+     * Construct a glyph font with specified font
+     * Defaults to use antialiasing and defaults to initialise a cache with ASCII characters
      *
      * @param font the font to use
      */
@@ -27,8 +28,9 @@ public class UnicodeGlyphFont {
 
     /**
      * Construct a glyph font with specified font and specified anti-aliasing preferences
+     * Defaults to initialise a cache with ASCII characters
      *
-     * @param font the font to use
+     * @param font      the font to use
      * @param antiAlias the anti-aliasing preference
      */
     public UnicodeGlyphFont(Font font, boolean antiAlias) {
@@ -37,26 +39,27 @@ public class UnicodeGlyphFont {
 
     /**
      * Construct a glyph font with specified font, specified anti-aliasing preferences and specified
-     * initial glyph page to cache.
+     * initial glyph pages to cache
      *
-     * @param font the font to use
-     * @param antiAlias the anti-aliasing preference
-     * @param initialCache the initial glyph page to cache. If {@code < 0} then no cache will be initialised
+     * @param font         the font to use
+     * @param antiAlias    the anti-aliasing preference
+     * @param initialCache the initial glyph pages to cache
      */
-    public UnicodeGlyphFont(Font font, boolean antiAlias, int initialCache) {
+    public UnicodeGlyphFont(Font font, boolean antiAlias, int... initialCache) {
         this.font = font;
         this.antiAlias = antiAlias;
         this.MARGIN = (float) Math.floor(font.getSize() / 5f);
-        if (initialCache >= 0)
-            setupGlyph(initialCache);
+
+        for (int id : initialCache)
+            setupGlyph(id);
     }
 
     /**
      * Draws a specified string to the screen with the specified x, y co-ordinates and colour
      *
-     * @param text the text to draw
-     * @param x the x co-ordinate
-     * @param y the y co-ordinate
+     * @param text   the text to draw
+     * @param x      the x co-ordinate
+     * @param y      the y co-ordinate
      * @param colour the colour
      * @return the width of the string drawn
      */
@@ -97,9 +100,9 @@ public class UnicodeGlyphFont {
      * Draws a specified character to the screen with the specified x, y co-ordinates and colour
      *
      * @param character the character to draw
-     * @param x the x co-ordinate
-     * @param y the y co-ordinate
-     * @param colour the colour
+     * @param x         the x co-ordinate
+     * @param y         the y co-ordinate
+     * @param colour    the colour
      * @return the width of the character drawn
      */
     public float drawCharacter(char character, float x, float y, int colour) {
@@ -111,9 +114,9 @@ public class UnicodeGlyphFont {
      * Draws a specified character's glyph page at specified x, y co-ordinates.
      * This method is mainly intended for testing purposes
      *
-     * @param c the character of glyph page
-     * @param x the x co-ordinate
-     * @param y the y co-ordinate
+     * @param c      the character of glyph page
+     * @param x      the x co-ordinate
+     * @param y      the y co-ordinate
      * @param colour the colour
      */
     public void drawGlyph(char c, float x, float y, int colour) {
@@ -132,22 +135,7 @@ public class UnicodeGlyphFont {
         int textureId = glGetInteger(GL_TEXTURE_2D);
         if (textureId != glyphPage.getTexture().getTextureID())
             glBindTexture(GL_TEXTURE_2D, glyphPage.getTexture().getTextureID());
-        float width = IMG_SIZE;
-        float height = IMG_SIZE;
-        float textureX = 0;
-        float textureY = 0;
-        float textureWidth = 1;
-        float textureHeight = 1;
-        glBegin(GL_QUADS);
-        glTexCoord2d(textureX, textureY);
-        glVertex2d(x, y);
-        glTexCoord2d(textureX, textureY + textureHeight);
-        glVertex2d(x, y + height);
-        glTexCoord2d(textureX + textureWidth, textureY + textureHeight);
-        glVertex2d(x + width, y + height);
-        glTexCoord2d(textureX + textureWidth, textureY);
-        glVertex2d(x + width, y);
-        glEnd();
+        RenderUtil.drawTextureQuad(x, y, IMG_SIZE, IMG_SIZE, 0, 0, 1, 1);
         if (textureId != glyphPage.getTexture().getTextureID())
             glBindTexture(GL_TEXTURE_2D, textureId);
         if (!texture)
@@ -230,16 +218,7 @@ public class UnicodeGlyphFont {
         double textureY = characterData.getY() / IMG_SIZE;
         double textureWidth = width / IMG_SIZE;
         double textureHeight = height / IMG_SIZE;
-        glBegin(GL_QUADS);
-        glTexCoord2d(textureX, textureY);
-        glVertex2d(x, y);
-        glTexCoord2d(textureX, textureY + textureHeight);
-        glVertex2d(x, y + height);
-        glTexCoord2d(textureX + textureWidth, textureY + textureHeight);
-        glVertex2d(x + width, y + height);
-        glTexCoord2d(textureX + textureWidth, textureY);
-        glVertex2d(x + width, y);
-        glEnd();
+        RenderUtil.drawTextureQuad(x, y, width, height, textureX, textureY, textureWidth, textureHeight);
         if (textureId != glyphPage.getTexture().getTextureID())
             glBindTexture(GL_TEXTURE_2D, textureId);
         return (float) width;

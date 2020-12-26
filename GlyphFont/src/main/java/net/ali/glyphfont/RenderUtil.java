@@ -18,6 +18,19 @@ public class RenderUtil {
         glColor4f(red, green, blue, alpha);
     }
 
+    public static void drawTextureQuad(double x, double y, double width, double height, double textureX, double textureY, double textureWidth, double textureHeight) {
+        glBegin(GL_QUADS);
+        glTexCoord2d(textureX, textureY);
+        glVertex2d(x, y);
+        glTexCoord2d(textureX, textureY + textureHeight);
+        glVertex2d(x, y + height);
+        glTexCoord2d(textureX + textureWidth, textureY + textureHeight);
+        glVertex2d(x + width, y + height);
+        glTexCoord2d(textureX + textureWidth, textureY);
+        glVertex2d(x + width, y);
+        glEnd();
+    }
+
     public static int uploadTexture(BufferedImage image) {
         int[] textureData = new int[image.getWidth() * image.getHeight()];
         image.getRGB(0, 0, image.getWidth(), image.getHeight(), textureData, 0, image.getWidth());
