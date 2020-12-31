@@ -5,10 +5,10 @@ import java.util.Map;
 public class GlyphPage {
 
     private final FontTexture texture;
-    private final double maxHeight;
+    private final int maxHeight;
     private final Map<Integer, CharacterData> characterRegistry;
 
-    public GlyphPage(FontTexture texture, double maxHeight, Map<Integer, CharacterData> characterRegistry) {
+    public GlyphPage(FontTexture texture, int maxHeight, Map<Integer, CharacterData> characterRegistry) {
         this.texture = texture;
         this.maxHeight = maxHeight;
         this.characterRegistry = characterRegistry;
@@ -18,7 +18,7 @@ public class GlyphPage {
         return texture;
     }
 
-    public double getMaxHeight() {
+    public int getMaxHeight() {
         return maxHeight;
     }
 

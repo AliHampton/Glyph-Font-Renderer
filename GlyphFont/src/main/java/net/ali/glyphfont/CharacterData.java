@@ -2,28 +2,28 @@ package net.ali.glyphfont;
 
 public class CharacterData {
 
-    private final double x, y, width, height;
+    private final int x, y, width, height;
 
-    public CharacterData(double x, double y, double width, double height) {
+    public CharacterData(int x, int y, int width, int height) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
     }
 
-    public double getX() {
+    public int getX() {
         return x;
     }
 
-    public double getY() {
+    public int getY() {
         return y;
     }
 
-    public double getWidth() {
+    public int getWidth() {
         return width;
     }
 
-    public double getHeight() {
+    public int getHeight() {
         return height;
     }
 }

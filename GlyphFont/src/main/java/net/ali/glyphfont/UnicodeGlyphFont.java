@@ -14,11 +14,12 @@ public class UnicodeGlyphFont {
     private final boolean antiAlias;
     private final Map<Integer, GlyphPage> GLYPH_REGISTRY = new HashMap<>();
     private static final int IMG_SIZE = 1024;
-    private final float MARGIN;
+    private final int MARGIN;
+    private final int spacing;
 
     /**
      * Construct a glyph font with specified font
-     * Defaults to use antialiasing and defaults to initialise a cache with ASCII characters
+     * Defaults to use antialiasing, a spacing of 0 and defaults to initialise a cache with ASCII characters
      *
      * @param font the font to use
      */
@@ -28,13 +29,13 @@ public class UnicodeGlyphFont {
 
     /**
      * Construct a glyph font with specified font and specified anti-aliasing preferences
-     * Defaults to initialise a cache with ASCII characters
+     * Defaults to initialise a cache with ASCII characters and a spacing of 0
      *
      * @param font      the font to use
      * @param antiAlias the anti-aliasing preference
      */
     public UnicodeGlyphFont(Font font, boolean antiAlias) {
-        this(font, antiAlias, 0);
+        this(font, antiAlias, 0, 0);
     }
 
     /**
@@ -45,10 +46,11 @@ public class UnicodeGlyphFont {
      * @param antiAlias    the anti-aliasing preference
      * @param initialCache the initial glyph pages to cache
      */
-    public UnicodeGlyphFont(Font font, boolean antiAlias, int... initialCache) {
+    public UnicodeGlyphFont(Font font, boolean antiAlias, int spacing, int... initialCache) {
         this.font = font;
         this.antiAlias = antiAlias;
-        this.MARGIN = (float) Math.floor(font.getSize() / 5f);
+        this.spacing = spacing;
+        this.MARGIN = (int) (font.getSize() / 5f);
 
         for (int id : initialCache)
             setupGlyph(id);
@@ -106,8 +108,26 @@ public class UnicodeGlyphFont {
      * @return the width of the character drawn
      */
     public float drawCharacter(char character, float x, float y, int colour) {
+        glPushMatrix();
+        boolean blend = glIsEnabled(GL_BLEND);
+        boolean lighting = glIsEnabled(GL_LIGHTING);
+        boolean texture = glIsEnabled(GL_TEXTURE_2D);
+        if (!texture)
+            glEnable(GL_TEXTURE_2D);
+        if (!blend)
+            glEnable(GL_BLEND);
+        if (lighting)
+            glDisable(GL_LIGHTING);
         RenderUtil.glColour(colour);
-        return drawCharacter(character, x, y);
+        float width = drawCharacter(character, x, y);
+        if (!texture)
+            glDisable(GL_TEXTURE_2D);
+        if (!blend)
+            glDisable(GL_BLEND);
+        if (lighting)
+            glEnable(GL_LIGHTING);
+        glPopMatrix();
+        return width;
     }
 
     /**
@@ -125,6 +145,8 @@ public class UnicodeGlyphFont {
         boolean blend = glIsEnabled(GL_BLEND);
         boolean lighting = glIsEnabled(GL_LIGHTING);
         boolean texture = glIsEnabled(GL_TEXTURE_2D);
+        x = (int) x;
+        y = (int) y;
         if (!texture)
             glEnable(GL_TEXTURE_2D);
         if (!blend)
@@ -212,16 +234,18 @@ public class UnicodeGlyphFont {
         int textureId = glGetInteger(GL_TEXTURE_2D);
         if (textureId != glyphPage.getTexture().getTextureID())
             glBindTexture(GL_TEXTURE_2D, glyphPage.getTexture().getTextureID());
-        double width = characterData.getWidth();
-        double height = characterData.getHeight();
-        double textureX = characterData.getX() / IMG_SIZE;
-        double textureY = characterData.getY() / IMG_SIZE;
-        double textureWidth = width / IMG_SIZE;
-        double textureHeight = height / IMG_SIZE;
+        x = (int) x;
+        y = (int) y;
+        int width = characterData.getWidth();
+        int height = characterData.getHeight();
+        double textureX = characterData.getX() / (float) IMG_SIZE;
+        double textureY = characterData.getY() / (float) IMG_SIZE;
+        double textureWidth = width / (float) IMG_SIZE;
+        double textureHeight = height / (float) IMG_SIZE;
         RenderUtil.drawTextureQuad(x, y, width, height, textureX, textureY, textureWidth, textureHeight);
         if (textureId != glyphPage.getTexture().getTextureID())
             glBindTexture(GL_TEXTURE_2D, textureId);
-        return (float) width;
+        return width;
     }
 
     private void setupGlyph(int id) {
@@ -230,14 +254,14 @@ public class UnicodeGlyphFont {
         Graphics2D graphics2D = setupGraphics(bufferedImage);
         if (id > 0) graphics2D.setFont(new Font("DEFAULT", font.getStyle(), font.getSize()));
         FontMetrics fontMetrics = graphics2D.getFontMetrics();
-        float x = MARGIN;
-        float y = MARGIN;
-        double maxHeight = 0;
+        int x = MARGIN;
+        int y = MARGIN;
+        int maxHeight = 0;
         for (int i = id * 256; i < (id + 1) * 256; i++) {
             String character = String.valueOf((char) i);
             Rectangle2D dimensions = fontMetrics.getStringBounds(character, graphics2D);
-            double width = dimensions.getWidth();
-            double height = dimensions.getHeight();
+            int width = (int) dimensions.getWidth() + spacing;
+            int height = (int)  dimensions.getHeight();
             if (x + width > IMG_SIZE) {
                 x = MARGIN;
                 y += maxHeight + MARGIN;
