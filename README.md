@@ -15,3 +15,7 @@ Creating a UnicodeGlyphFont object is simple. Keep in mind everytime you initial
  ```java
 font.drawString("Hello World!", 5, 5, -1);
 ```
+
+### TODO:
+
+- Change from GL immediate mode to a shader based approach
