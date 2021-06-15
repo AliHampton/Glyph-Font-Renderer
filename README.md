@@ -19,3 +19,4 @@ font.drawString("Hello World!", 5, 5, -1);
 ### TODO:
 
 - Change from GL immediate mode to a shader based approach
+- Add a signed distance field option for rendering
